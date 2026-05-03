@@ -11,27 +11,21 @@
   "account_head",
   "col_break_1",
   "description",
-  "included_in_print_rate",
-  "included_in_paid_amount",
   "accounting_dimensions_section",
   "cost_center",
   "dimension_col_break",
   "project",
   "section_break_8",
-  "rate",
   "retention_rate",
   "section_break_9",
   "account_currency",
-  "tax_amount",
   "retention_amount",
   "total",
   "tax_amount_after_discount_amount",
   "column_break_13",
   "base_tax_amount",
   "base_total",
-  "base_tax_amount_after_discount_amount",
-  "item_wise_tax_detail",
-  "dont_recompute_tax"
+  "base_tax_amount_after_discount_amount"
  ],
  "fields": [
   {
@@ -82,25 +76,6 @@
    "width": "300px"
   },
   {
-   "default": "0",
-   "description": "If checked, the tax amount will be considered as already included in the Print Rate / Print Amount",
-   "fieldname": "included_in_print_rate",
-   "fieldtype": "Check",
-   "label": "Is this Tax included in Basic Rate?",
-   "print_hide": 1,
-   "print_width": "150px",
-   "report_hide": 1,
-   "width": "150px"
-  },
-  {
-   "default": "0",
-   "depends_on": "eval:['Sales Taxes and Charges Template', 'Payment Entry'].includes(parent.doctype)",
-   "description": "If checked, the tax amount will be considered as already included in the Paid Amount in Payment Entry",
-   "fieldname": "included_in_paid_amount",
-   "fieldtype": "Check",
-   "label": "Considered In Paid Amount"
-  },
-  {
    "fieldname": "accounting_dimensions_section",
    "fieldtype": "Section Break",
    "label": "Accounting Dimensions"
@@ -131,15 +106,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "columns": 2,
-   "fieldname": "rate",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Tax Rate",
-   "oldfieldname": "rate",
-   "oldfieldtype": "Currency"
-  },
-  {
    "fieldname": "section_break_9",
    "fieldtype": "Section Break"
   },
@@ -150,14 +116,6 @@
    "label": "Account Currency",
    "options": "Currency",
    "read_only": 1
-  },
-  {
-   "columns": 2,
-   "fieldname": "tax_amount",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Amount",
-   "options": "currency"
   },
   {
    "columns": 2,
@@ -206,24 +164,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "item_wise_tax_detail",
-   "fieldtype": "Code",
-   "hidden": 1,
-   "label": "Item Wise Tax Detail",
-   "oldfieldname": "item_wise_tax_detail",
-   "oldfieldtype": "Small Text",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "dont_recompute_tax",
-   "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Dont Recompute tax",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
    "columns": 2,
    "fieldname": "retention_rate",
    "fieldtype": "Float",
@@ -244,7 +184,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-05-02 16:01:11.278362",
+ "modified": "2026-05-03 13:42:54.926812",
  "modified_by": "Administrator",
  "module": "Invoicing Retention",
  "name": "Sales Invoice Retention",

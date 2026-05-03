@@ -5,6 +5,15 @@ frappe.ui.form.on("Sales Invoice", {
 	refresh: function (frm) {
 		// calculation when net_total changes
 		frm.trigger("calculate_retention");
+		frm.set_query("account_head", "retention", function () {
+			return {
+				filters: {
+					account_type: "Receivable",
+					is_group: 0,
+					company: frm.doc.company,
+				},
+			};
+		});
 	},
 
 	net_total: function (frm) {
@@ -60,5 +69,9 @@ frappe.ui.form.on("Sales Invoice Retention", {
 
 	retention_remove: function (frm, cdt, cdn) {
 		frm.trigger("calculate_retention");
+	},
+	retention_add: function (frm, cdt, cdn) {
+		frm.trigger("calculate_retention");
+		
 	},
 });
