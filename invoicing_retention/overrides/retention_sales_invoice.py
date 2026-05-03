@@ -42,36 +42,49 @@ def make_retention_gl_entries(doc, method=None):
         if flt(row.retention_amount) <= 0:
             continue
 
-        # Debit Entry - Customer Account (Debit To)
+        # Debit Entry - Retention Account
+        retention_account_type = frappe.get_value(
+            "Account", row.account_head, "account_type"
+        )
+        party_details = (
+            {
+                "party_type": "Customer",
+                "party": doc.customer,
+            }
+            if retention_account_type == "Receivable"
+            else {}
+        )
+
+        gl_entries.append(
+            doc.get_gl_dict(
+                {
+                    "account": row.account_head,
+                    "debit": flt(row.retention_amount),
+                    "credit": 0,
+                    "against": doc.debit_to,
+                    "cost_center": doc.cost_center,
+                    "is_retention_entry": 1,
+                    "remarks": _("Retention Debit - Invoice {0} - Rate: {1}%").format(
+                        doc.name, row.retention_rate
+                    ),
+                    **party_details,
+                }
+            )
+        )
+
+        # Credit Entry - Customer Account (Debit To)
         gl_entries.append(
             doc.get_gl_dict(
                 {
                     "account": doc.debit_to,
-                    "debit": flt(row.retention_amount),
-                    "credit": 0,
+                    "debit": 0,
+                    "credit": flt(row.retention_amount),
                     "against": row.account_head,
                     "cost_center": doc.cost_center,
                     "party_type": "Customer",
                     "party": doc.customer,
                     "is_retention_entry": 1,
-                    "remarks": _("Retention Debit - Invoice {0}").format(doc.name),
-                }
-            )
-        )
-
-        # Credit Entry - Retention Account
-        gl_entries.append(
-            doc.get_gl_dict(
-                {
-                    "account": row.account_head,
-                    "debit": 0,
-                    "credit": flt(row.retention_amount),
-                    "against": doc.debit_to,
-                    "cost_center": doc.cost_center,
-                    "is_retention_entry": 1,
-                    "remarks": _("Retention Credit - Invoice {0} - Rate: {1}%").format(
-                        doc.name, row.retention_rate
-                    ),
+                    "remarks": _("Retention Credit - Invoice {0}").format(doc.name),
                 }
             )
         )
@@ -123,6 +136,8 @@ def cancel_retention_gl_entries(doc):
                     "credit": flt(gle.debit),
                     "against": gle.against,
                     "cost_center": doc.cost_center,
+                    "party_type": gle.party_type,
+                    "party": gle.party,
                     "is_retention_entry": 1,
                     "is_cancelled": 1,
                     "remarks": _("Retention Entry Cancelled - Invoice {0}").format(
