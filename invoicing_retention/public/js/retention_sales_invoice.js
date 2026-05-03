@@ -1,6 +1,3 @@
-// Script Name: Sales Invoice Retention Calculation
-// Doctype: Sales Invoice
-
 frappe.ui.form.on("Sales Invoice", {
 	refresh: function (frm) {
 		// calculation when net_total changes
@@ -18,6 +15,7 @@ frappe.ui.form.on("Sales Invoice", {
 
 	net_total: function (frm) {
 		frm.trigger("calculate_retention");
+		frm.trigger("update_grand_total");
 	},
 
 	calculate_retention: function (frm) {
@@ -38,23 +36,25 @@ frappe.ui.form.on("Sales Invoice", {
 		});
 
 		frm.refresh_field("retention");
-		// frm.trigger("update_grand_total");
+		frm.trigger("update_grand_total");
 	},
 
 	update_grand_total: function (frm) {
 		//  Add retention total to grand total or keep separate
-		// let total_retention = 0;
-		// $.each(frm.doc.retention, function(i, d) {
-		//     total_retention += flt(d.retention_amount);
-		// });
-		// frm.doc.total_retention = total_retention;
-		// frm.refresh_field('total_retention');
+		let total_retention = 0;
+		$.each(frm.doc.retention, function (i, d) {
+			total_retention += flt(d.retention_amount);
+		});
+		let grand_total_after_retention = flt(frm.doc.grand_total) - total_retention;
+		frm.doc.total_retention = grand_total_after_retention;
+		frm.refresh_field("total_retention");
 	},
 });
 
 frappe.ui.form.on("Sales Invoice Retention", {
 	retention_rate: function (frm, cdt, cdn) {
 		frm.trigger("calculate_retention");
+		frm.trigger("update_grand_total");
 	},
 
 	retention_amount: function (frm, cdt, cdn) {
@@ -69,9 +69,9 @@ frappe.ui.form.on("Sales Invoice Retention", {
 
 	retention_remove: function (frm, cdt, cdn) {
 		frm.trigger("calculate_retention");
+		frm.trigger("update_grand_total");
 	},
 	retention_add: function (frm, cdt, cdn) {
 		frm.trigger("calculate_retention");
-		
 	},
 });
