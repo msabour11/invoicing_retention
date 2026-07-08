@@ -10,8 +10,12 @@ required_apps = ["frappe", "erpnext"]
 doctype_js = {"Sales Invoice": "public/js/retention_sales_invoice.js"}
 doc_events = {
     "Sales Invoice": {
-        "on_submit": "invoicing_retention.overrides.retention_sales_invoice.after_submit",
-        "on_cancel": "invoicing_retention.overrides.retention_sales_invoice.on_cancel",
+        "on_submit": [
+            "invoicing_retention.overrides.retention_sales_invoice.after_submit",
+        ],
+        "on_cancel": [
+            "invoicing_retention.overrides.retention_sales_invoice.on_cancel",
+        ],
     }
 }
 
