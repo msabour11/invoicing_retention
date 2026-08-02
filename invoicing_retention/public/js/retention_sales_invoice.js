@@ -1,6 +1,7 @@
 frappe.ui.form.on("Sales Invoice", {
 	refresh: function (frm) {
 		// calculation when net_total changes
+		frappe.msgprint("Refreshing Sales Invoice form...");
 		frm.trigger("calculate_retention");
 		frm.set_query("account_head", "retention", function () {
 			return {
@@ -15,6 +16,9 @@ frappe.ui.form.on("Sales Invoice", {
 
 	net_total: function (frm) {
 		frm.trigger("calculate_retention");
+		frm.trigger("update_grand_total");
+	},
+	total: function (frm) {
 		frm.trigger("update_grand_total");
 	},
 
@@ -40,13 +44,17 @@ frappe.ui.form.on("Sales Invoice", {
 	},
 
 	update_grand_total: function (frm) {
-		//  Add retention total to grand total or keep separate
 		let total_retention = 0;
-		$.each(frm.doc.retention, function (i, d) {
-			total_retention += flt(d.retention_amount);
+		$.each(frm.doc.retention || [], function (i, d) {
+			total_retention += flt(d.retention_amount || 0);
 		});
-		let grand_total_after_retention = flt(frm.doc.grand_total) - total_retention;
+
+		let base_total = flt(frm.doc.total || 0);
+		let tax_total = flt(frm.doc.custom_total_taxes || 0);
+		let grand_total_after_retention = base_total + tax_total - total_retention;
+
 		frm.doc.total_retention = grand_total_after_retention;
+		frm.set_value("total_retention", grand_total_after_retention);
 		frm.refresh_field("total_retention");
 	},
 });
@@ -58,13 +66,13 @@ frappe.ui.form.on("Sales Invoice Retention", {
 	},
 
 	retention_amount: function (frm, cdt, cdn) {
-		// Recalculate totals if retention_amount is manually changed
 		let cumulative_total = 0;
-		$.each(frm.doc.retention, function (i, d) {
-			cumulative_total += flt(d.retention_amount);
+		$.each(frm.doc.retention || [], function (i, d) {
+			cumulative_total += flt(d.retention_amount || 0);
 			d.total = cumulative_total;
 		});
 		frm.refresh_field("retention");
+		frm.trigger("update_grand_total");
 	},
 
 	retention_remove: function (frm, cdt, cdn) {
