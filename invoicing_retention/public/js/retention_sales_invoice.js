@@ -1,7 +1,6 @@
 frappe.ui.form.on("Sales Invoice", {
 	refresh: function (frm) {
 		// calculation when net_total changes
-		frappe.msgprint("Refreshing Sales Invoice form...");
 		frm.trigger("calculate_retention");
 		frm.set_query("account_head", "retention", function () {
 			return {
